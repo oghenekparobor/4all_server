@@ -5,7 +5,7 @@ This Node.js service connects your Godot game to Vorld Arena Arcade, enabling re
 ## Prerequisites
 
 1. **Node.js 18+** installed
-2. **Vorld Arena Arcade account** at https://vorld.app
+2. **Vorld Arena Arcade account** at https://thevorld.com
 3. **Arena Arcade game created** (follow the setup guide in the images)
 
 ## Setup Instructions
@@ -37,7 +37,7 @@ STREAM_URL=https://twitch.tv/your_channel
 ### 3. Get Your Credentials
 
 #### A. Create Vorld Auth App
-1. Go to https://vorld.app
+1. Go to https://thevorld.com
 2. Navigate to Developer section
 3. Create a new Auth App
 4. Copy your `VORLD_APP_ID`
@@ -135,6 +135,6 @@ Now integrate the Godot client side:
 
 ## Support
 
-For Vorld API issues: https://vorld.app/docs
+For Vorld API issues: https://thevorld.com/docs
 For this bridge: Check console logs and GitHub issues
 
