@@ -77,7 +77,7 @@ async function requestOTP() {
         
       } else {
         // Email already verified, can login
-        console.log('✅ Email already verified!\n');
+        console.log('✅ OTP sent to your email! Check your email for the 6-digit verification code\n');
         
         if (response.data.data.accessToken) {
           console.log('🎉 You\'re already logged in!');

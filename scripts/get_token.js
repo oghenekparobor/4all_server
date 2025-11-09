@@ -40,7 +40,7 @@ async function getAuthToken() {
     console.log('⏳ Authenticating...\n');
     
     // Try the auth endpoint
-    const authUrl = 'https://api.thevorld.com/api/auth/login';
+    const authUrl = 'https://vorld-auth.onrender.com/api/auth/login';
     
     const response = await axios.post(
       authUrl,

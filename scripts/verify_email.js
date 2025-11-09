@@ -42,7 +42,7 @@ async function verifyEmail() {
     console.log('⏳ Verifying...\n');
     
     // Try the verify OTP endpoint
-    const verifyUrl = 'https://api.thevorld.com/api/auth/verify-otp';
+    const verifyUrl = 'https://vorld-auth.onrender.com/api/auth/verify-otp';
     
     const response = await axios.post(
       verifyUrl,
