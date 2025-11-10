@@ -453,6 +453,33 @@ class VorldGodotBridge {
         this.sendServiceResponse(res, result);
       })
     );
+
+    app.post(
+      '/api/games/stats',
+      asyncRoute(async (req, res) => {
+        const statsPayload = req.body || {};
+        const result = await this.vorldService.updatePlayerStats(statsPayload);
+        this.sendServiceResponse(res, result);
+      })
+    );
+
+    app.post(
+      '/api/games/runs',
+      asyncRoute(async (req, res) => {
+        const summaryPayload = req.body || {};
+        const result = await this.vorldService.submitRunSummary(summaryPayload);
+        this.sendServiceResponse(res, result);
+      })
+    );
+
+    app.post(
+      '/api/events/ack',
+      asyncRoute(async (req, res) => {
+        const ackPayload = req.body || {};
+        const result = await this.vorldService.acknowledgeEvent(ackPayload);
+        this.sendServiceResponse(res, result);
+      })
+    );
   }
 
   sendServiceResponse(res, result, successStatus = 200) {

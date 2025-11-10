@@ -1,6 +1,8 @@
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import path from 'path';
 
 /**
  * Vorld Arena Arcade Service
@@ -12,7 +14,8 @@ export class VorldArenaService {
     this.socket = null;
     this.gameState = null;
     this.connected = false;
-
+    this.storageDir = path.resolve(process.cwd(), 'data');
+    
     // Event handlers (to be set by the bridge)
     this.onArenaBegins = null;
     this.onPlayerBoostActivated = null;
@@ -189,7 +192,7 @@ export class VorldArenaService {
 
       // Persist latest stream URL so subsequent calls reuse it
       this.config.streamUrl = effectiveStreamUrl;
-
+      
       // Initialize game session - official endpoint from docs
       const response = await this.makeRequest('POST', 'games/init', {
         streamUrl: effectiveStreamUrl
@@ -231,7 +234,7 @@ export class VorldArenaService {
     return new Promise((resolve, reject) => {
       try {
         console.log('🔌 Connecting to Vorld WebSocket...');
-
+        
         this.socket = io(targetUrl, {
           auth: {
             token: this.config.userToken,
@@ -454,6 +457,96 @@ export class VorldArenaService {
   }
 
   /**
+   * Update player statistics
+   */
+  async updatePlayerStats(statsPayload = {}) {
+    try {
+      if (!this.config.userToken) {
+        throw new Error('USER_TOKEN not configured for stats update');
+      }
+
+      const timestamp = new Date().toISOString();
+      const entry = {
+        ...statsPayload,
+        timestamp
+      };
+
+      await this._appendToFile('player_stats.json', entry);
+
+      return {
+        success: true,
+        data: {
+          stored: true,
+          timestamp
+        }
+      };
+    } catch (error) {
+      console.error('Failed to update player stats:', error.message);
+      return this.formatFailure(error, 'Failed to update player stats');
+    }
+  }
+
+  /**
+   * Submit a run summary
+   */
+  async submitRunSummary(summaryPayload = {}) {
+    try {
+      if (!this.config.userToken) {
+        throw new Error('USER_TOKEN not configured for run summary');
+      }
+
+      const timestamp = new Date().toISOString();
+      const entry = {
+        ...summaryPayload,
+        timestamp
+      };
+
+      await this._appendToFile('run_summaries.json', entry);
+
+      return {
+        success: true,
+        data: {
+          stored: true,
+          timestamp
+        }
+      };
+    } catch (error) {
+      console.error('Failed to submit run summary:', error.message);
+      return this.formatFailure(error, 'Failed to submit run summary');
+    }
+  }
+
+  /**
+   * Acknowledge viewer event handling
+   */
+  async acknowledgeEvent(eventPayload = {}) {
+    try {
+      if (!this.config.userToken) {
+        throw new Error('USER_TOKEN not configured for event acknowledgement');
+      }
+
+      const timestamp = new Date().toISOString();
+      const entry = {
+        ...eventPayload,
+        timestamp
+      };
+
+      await this._appendToFile('event_acknowledgements.json', entry);
+
+      return {
+        success: true,
+        data: {
+          stored: true,
+          timestamp
+        }
+      };
+    } catch (error) {
+      console.error('Failed to acknowledge event:', error.message);
+      return this.formatFailure(error, 'Failed to acknowledge event');
+    }
+  }
+
+  /**
    * Stop an active game session
    */
   async stopGame(gameId) {
@@ -623,6 +716,39 @@ export class VorldArenaService {
     }
     this.connected = false;
     this.gameState = null;
+  }
+
+  async _ensureStorageDir() {
+    try {
+      await fs.mkdir(this.storageDir, { recursive: true });
+    } catch (error) {
+      if (error.code !== 'EEXIST') {
+        throw error;
+      }
+    }
+  }
+
+  async _appendToFile(fileName, entry) {
+    await this._ensureStorageDir();
+    const filePath = path.join(this.storageDir, fileName);
+
+    let current = [];
+    try {
+      const existing = await fs.readFile(filePath, 'utf8');
+      current = JSON.parse(existing);
+      if (!Array.isArray(current)) {
+        current = [];
+      }
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        console.warn(`⚠️  Failed to read existing data for ${fileName}:`, error.message);
+      }
+      current = [];
+    }
+
+    current.push(entry);
+
+    await fs.writeFile(filePath, JSON.stringify(current, null, 2), 'utf8');
   }
 }
 
