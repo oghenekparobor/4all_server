@@ -47,7 +47,8 @@ class VorldGodotBridge {
       arenaServerUrl: process.env.ARENA_SERVER_URL || 'wss://airdrop-arcade.onrender.com/ws/arcade_mhcg6dxr_19395e5c',
       gameApiUrl: process.env.GAME_API_URL || 'https://airdrop-arcade.onrender.com',
       authApiUrl: process.env.AUTH_API_URL || 'https://vorld-auth.onrender.com/api',
-      godotPort: parseInt(process.env.GODOT_WEBSOCKET_PORT || '9080')
+      // Render uses PORT env var, fallback to GODOT_WEBSOCKET_PORT or 9080 for local
+      godotPort: parseInt(process.env.PORT || process.env.GODOT_WEBSOCKET_PORT || '9080')
     };
   }
 

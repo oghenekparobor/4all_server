@@ -171,7 +171,8 @@ export class GodotBridge {
    */
   start() {
     return new Promise((resolve) => {
-      this.server.listen(this.port, () => {
+      // Listen on 0.0.0.0 to accept external connections (required for Render, Railway, etc.)
+      this.server.listen(this.port, '0.0.0.0', () => {
         console.log(`🌉 Godot Bridge listening on port ${this.port}`);
         console.log(`   WebSocket: ws://localhost:${this.port}`);
         console.log(`   Health: http://localhost:${this.port}/health`);

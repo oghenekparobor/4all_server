@@ -73,25 +73,33 @@ You should see:
 ╚════════════════════════════════════════════════════════╝
 ```
 
-#### Deploy to Vercel
+#### Deploy to Render.com (Recommended)
 
-This project is optimized for Vercel's Hobby plan (12 function limit):
+This is a WebSocket server that requires a long-running process platform like Render.com:
 
 ```bash
-# Install Vercel CLI
-npm i -g vercel
+# 1. Push your code to GitHub
+git push origin main
 
-# Deploy
-vercel
+# 2. Go to https://render.com and create account
+# 3. New + → Web Service → Connect your repo
+# 4. Configure:
+#    - Build: npm install
+#    - Start: npm start
+#    - Add environment variables (see below)
+# 5. Deploy!
 
-# Set environment variables in Vercel dashboard
-# - VORLD_APP_ID
-# - ARENA_GAME_ID
-# - USER_TOKEN
-# - STREAM_URL
+# Your service will be live at: https://your-service.onrender.com
 ```
 
-The consolidated API uses only 8 serverless functions, well within the free tier limit.
+**Required Environment Variables on Render:**
+- `VORLD_APP_ID` - Your Vorld app ID
+- `ARENA_GAME_ID` - Your arena game ID  
+- `USER_TOKEN` - Your JWT token
+- `STREAM_URL` - Your stream URL
+
+See **[QUICK_START.md](./QUICK_START.md)** for 5-minute deployment guide.  
+See **[RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)** for detailed step-by-step guide.
 
 ## How It Works
 
