@@ -55,6 +55,8 @@ STREAM_URL=https://twitch.tv/your_channel
 
 ### 4. Run the Bridge
 
+#### Local Development
+
 ```bash
 npm start
 ```
@@ -70,6 +72,26 @@ You should see:
 ║  4. Viewers can now influence the game!                ║
 ╚════════════════════════════════════════════════════════╝
 ```
+
+#### Deploy to Vercel
+
+This project is optimized for Vercel's Hobby plan (12 function limit):
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel
+
+# Set environment variables in Vercel dashboard
+# - VORLD_APP_ID
+# - ARENA_GAME_ID
+# - USER_TOKEN
+# - STREAM_URL
+```
+
+The consolidated API uses only 8 serverless functions, well within the free tier limit.
 
 ## How It Works
 
@@ -123,8 +145,42 @@ For development, you can trigger test events using the Vorld Arena Arcade dashbo
 
 ## API Endpoints
 
-- **Health Check**: `http://localhost:3000/health`
-- **Status**: `http://localhost:3000/status`
+The service provides a consolidated REST API (8 endpoints, optimized for Vercel Hobby plan):
+
+### Core Endpoints
+- **Health Check**: `GET /health`
+- **Status**: `GET /api/status`
+- **Profile**: `GET /api/profile`
+
+### Authentication
+- `POST /api/auth?action=login` - Login with email/password
+- `POST /api/auth?action=request-otp` - Request OTP for verification
+- `POST /api/auth?action=verify-otp` - Verify OTP code
+
+### Game Management
+- `POST /api/games` - Initialize a new game session
+- `GET /api/games?gameId={id}` - Get game details
+- `POST /api/games?gameId={id}&action=stop` - Stop a game
+- `PUT /api/games?gameId={id}&action=stream-url` - Update stream URL
+- `POST /api/games?action=runs` - Submit run summary
+- `POST /api/games?action=stats` - Update player stats
+
+### Boost System
+- `POST /api/boost?gameId={id}&faction={faction}` - Boost a faction
+- `POST /api/boost?gameId={id}&playerId={id}` - Boost a specific player
+- `GET /api/boost?gameId={id}&action=stats` - Get boost statistics
+
+### Events
+- `POST /api/events?action=ack` - Acknowledge an event
+- `POST /api/events?gameId={id}&action=trigger` - Trigger a custom event
+
+### Items
+- `POST /api/items?gameId={id}&action=drop` - Drop an item for a player
+
+### Configuration
+- `POST /api/config?action=user-token` - Set/update user authentication token
+
+For detailed migration guide and examples, see [API_MIGRATION.md](./API_MIGRATION.md).
 
 ## Next Steps
 
